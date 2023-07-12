@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+
+
+<body>
+
+
+  <select name="cars" id="cars">
+    <optgroup label="Swedish Cars">
+      <option value="volvo">Volvo</option>
+      <option value="saab">Saab</option>
+    </optgroup>
+    <optgroup label="German Cars">
+      <option value="mercedes">Mercedes</option>
+      <option value="audi">Audi</option>
+    </optgroup>
+  </select>
+
+
+  <script>
+    // Get the select element
+    const selectElement = document.getElementById("cars");
+
+    // Add a custom class to the select element
+    selectElement.classList.add("custom-select");
+
+    // Create a new div element for the custom select dropdown
+    const customSelect = document.createElement("div");
+    customSelect.classList.add("custom-select-dropdown");
+
+    // Create a new span element to display the selected option
+    const selectedOption = document.createElement("span");
+    selectedOption.classList.add("selected-option");
+    selectedOption.textContent = selectElement.value;
+
+    // Append the selected option to the custom select dropdown
+    customSelect.appendChild(selectedOption);
+
+    // Create a new ul element for the option groups
+    const optionGroups = selectElement.getElementsByTagName("optgroup");
+
+    // Iterate over the option groups
+    for (let i = 0; i < optionGroups.length; i++) {
+      const optionGroupLabel = optionGroups[i].label;
+
+      // Create a new span element for the option group label
+      const optionGroupLabelElement = document.createElement("span");
+      optionGroupLabelElement.classList.add("option-group-label");
+      optionGroupLabelElement.textContent = optionGroupLabel;
+
+      // Append the option group label to the custom select dropdown
+      customSelect.appendChild(optionGroupLabelElement);
+
+      // Create a new ul element for the options in the current option group
+      const optionsList = document.createElement("ul");
+      optionsList.classList.add("options-list");
+
+      // Get the options within the current option group
+      const optionElements = optionGroups[i].getElementsByTagName("option");
+
+      // Create li elements for each option and append them to the options list
+      for (let j = 0; j < optionElements.length; j++) {
+        const option = document.createElement("li");
+        option.textContent = optionElements[j].textContent;
+
+        // Handle option click event
+        option.addEventListener("click", function () {
+          selectElement.value = optionElements[j].value;
+          selectedOption.textContent = option.textContent;
+          customSelect.classList.remove("show-options");
+        });
+
+        optionsList.appendChild(option);
+      }
+
+      // Append the options list to the custom select dropdown
+      customSelect.appendChild(optionsList);
+    }
+
+    // Handle custom select dropdown click event
+    customSelect.addEventListener("click", function () {
+      this.classList.toggle("show-options");
+    });
+
+    // Hide the options list when clicking outside the custom select dropdown
+    document.addEventListener("click", function (event) {
+      if (!customSelect.contains(event.target)) {
+        customSelect.classList.remove("show-options");
+      }
+    });
+
+    // Replace the select element with the custom select dropdown
+    selectElement.parentNode.replaceChild(customSelect, selectElement);
+  </script>
+</body>
+
+</html>

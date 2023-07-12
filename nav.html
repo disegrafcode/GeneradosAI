@@ -1,5 +1,27 @@
 <ul class="list-group">
-    <li class="list-group-item">Item 1</li>
-    <li class="list-group-item">Item 2</li>
-    <li class="list-group-item">Item 3</li>
+    <li onclick="loadIframe('01-dropdown.html')" title="Se puede usar como custom select">
+        01-dropdown
+    </li>
+    <li onclick="loadIframe('02-dropdown-radio-onlycss.html')" title="Este usa el check radio, only css">
+        02-dropdown-radio-onlycss
+    </li>
+    <li onclick="loadIframe('03-custom-select-base.html')" title="Este es Base, Usa select y lo cambia cuando se cambi el listado">
+        03-custom-select-base
+    </li>
+    
 </ul>
+
+<style>
+    ul.list-group li {
+        padding: 8px;
+        width: 100%;
+        border-bottom: solid 1px gray;
+        cursor: pointer;
+        margin: 0;
+    }
+    ul.list-group li:hover, ul.list-group li.active
+    {
+        background-color: black;
+        color: white;
+    }
+</style>
