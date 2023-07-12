@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+
+
+<body>
+
+
+    <div class="customDropDownIsil">
+        <input type="checkbox" id="customDropDownIsil-toggle" class="customDropDownIsil-toggle">
+        <label for="customDropDownIsil-toggle" class="customDropDownIsil-label">Select an option</label>
+        <ul class="customDropDownIsil-menu">
+            <li class="optgroup">
+                <span class="optgroup-label">Swedish Cars</span>
+                <ul class="options-list">
+                    <li>
+                        <input type="radio" id="volvo" name="car" value="volvo">
+                        <label for="volvo">Volvo</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="saab" name="car" value="saab">
+                        <label for="saab">Saab</label>
+                    </li>
+                </ul>
+            </li>
+            <li class="optgroup">
+                <span class="optgroup-label">German Cars</span>
+                <ul class="options-list">
+                    <li>
+                        <input type="radio" id="mercedes" name="car" value="mercedes">
+                        <label for="mercedes">Mercedes</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="audi" name="car" value="audi">
+                        <label for="audi">Audi</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="mercedes2" name="car" value="mercedes">
+                        <label for="mercedes">Mercedes2</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="audi2" name="car" value="audi">
+                        <label for="audi">Audi2</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="audi3" name="car" value="audi">
+                        <label for="audi">Audi3</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="audi4" name="car" value="audi">
+                        <label for="audi">Audi4</label>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+
+
+    <style>
+        .customDropDownIsil {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .customDropDownIsil-toggle {
+            display: none;
+        }
+
+        .customDropDownIsil-label {
+            display: block;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .customDropDownIsil-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 5px;
+            padding: 0;
+            list-style: none;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .optgroup {
+            padding: 0;
+        }
+
+        .optgroup-label {
+            display: block;
+            padding: 5px 10px;
+            font-weight: bold;
+            background-color: #f2f2f2;
+        }
+
+        .options-list {
+            padding: 0;
+        }
+
+        .options-list li {
+            display: block;
+        }
+
+        .options-list li input[type="radio"] {
+            display: none;
+        }
+
+        .options-list li label {
+            display: block;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .customDropDownIsil-toggle:checked~.customDropDownIsil-menu {
+            display: block;
+        }
+
+        .customDropDownIsil-menu input[type="radio"]:checked+label {
+            background-color: #f2f2f2;
+        }
+    </style>
+
+    <script>
+        // Get the customDropDownIsil elements
+        const customDropDownIsilToggle = document.getElementById("customDropDownIsil-toggle");
+        const customDropDownIsilLabel = document.querySelector(".customDropDownIsil-label");
+        const radioButtons = document.querySelectorAll('.customDropDownIsil input[type="radio"]');
+
+        // Add event listener to capture the selected value
+        radioButtons.forEach(function (radioButton) {
+            radioButton.addEventListener("change", function () {
+                const selectedValue = this.value;
+                customDropDownIsilToggle.checked = false; // Close the customDropDownIsil
+                customDropDownIsilLabel.textContent = selectedValue; // Change the label text
+            });
+        });
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <select id="templateSelect">
+        <option value="template1.html">Template 1</option>
+        <option value="template2.html">Template 2</option>
+        <!-- Add more options for additional templates -->
+    </select>
+
+    <textarea id="variablesTextarea" rows="5">
+      name: John
+      age: 25
+      </textarea>
+
+    <blockquote>
+        <pre>
+              <code id="snippetOutput"></code>
+            </pre>
+    </blockquote>
+    <script>
+        function generateSnippet() {
+            const selectedTemplate = document.getElementById('templateSelect').value;
+
+            // Read the selected template file
+            fetch(`templates/${selectedTemplate}`)
+                .then(response => response.text())
+                .then(template => {
+                    // Read the variables from the textarea
+                    const textareaContent = document.getElementById('variablesTextarea').value;
+                    const variableLines = textareaContent.trim().split('\n');
+                    const variables = {};
+
+                    // Parse the variables from the textarea
+                    for (const line of variableLines) {
+                        const [key, value] = line.split(':').map(part => part.trim());
+                        variables[key] = value;
+                    }
+
+                    // Replace variables in the template
+                    const snippet = template.replace(/\${(.*?)}/g, (_, key) => variables[key]);
+
+                    // Update the snippet output
+                    document.getElementById('snippetOutput').textContent = snippet;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Generate the initial snippet
+        generateSnippet();
+
+        // Listen for changes in the template selection and textarea
+        document.getElementById('templateSelect').addEventListener('change', generateSnippet);
+        document.getElementById('variablesTextarea').addEventListener('input', generateSnippet);
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+
+    <script>
+        // Read the template file
+        fetch('template.html')
+            .then(response => response.text())
+            .then(template => {
+                // Define the variables
+                const variables = {
+                    name: "John",
+                    age: 25,
+                };
+
+                // Replace variables in the template
+                const snippet = template.replace(/\${(.*?)}/g, (_, key) => variables[key]);
+
+                console.log(snippet);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    </script>
+
+</body>
+
+</html>
