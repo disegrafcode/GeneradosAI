@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Word Replacement</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/codemirror.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/addon/comment/comment.min.js"></script>
+  <style>
+    .CodeMirror {
+      height: auto;
+      border: 1px solid #ddd;
+    }
+  </style>
+  <script>
+    var editor;
+
+    function initEditor() {
+      var textarea = document.getElementById('text-textarea');
+      editor = CodeMirror.fromTextArea(textarea, {
+        lineNumbers: true,
+        mode: 'javascript',
+        matchBrackets: true,
+        extraKeys: {
+          'Ctrl-/': 'toggleComment',
+        },
+      });
+
+      // Retrieve the stored value from localStorage
+      var storedValue = localStorage.getItem('textValue');
+      if (storedValue) {
+        editor.setValue(storedValue);
+      }
+    }
+
+    function replaceWords() {
+      // Get the textareas
+      var variablesTextarea = document.getElementById('variables-textarea');
+
+      // Get the variables and their replacement values
+      var variableLines = variablesTextarea.value.split('\n');
+      var variables = [];
+      var replacements = [];
+
+      // Parse the variables and replacement values
+      for (var i = 0; i < variableLines.length; i++) {
+        var parts = variableLines[i].split(':');
+        if (parts.length === 2) {
+          var variable = parts[0].trim();
+          var replacement = parts[1].trim();
+          variables.push(variable);
+          replacements.push(replacement);
+        }
+      }
+
+      // Get the text to replace
+      var text = editor.getValue();
+
+      // Replace the words in the text
+      for (var j = 0; j < variables.length; j++) {
+        var variable = variables[j];
+        var replacement = replacements[j];
+        var regex = new RegExp('\\b' + variable + '\\b', 'g');
+        text = text.replace(regex, replacement);
+      }
+
+      // Update the editor with the result
+      editor.setValue(text);
+
+      // Store the values in localStorage
+      localStorage.setItem('variablesValue', variablesTextarea.value);
+      localStorage.setItem('textValue', text);
+    }
+
+    function copyToClipboard() {
+      // Get the text from the editor
+      var text = editor.getValue();
+
+      // Create a temporary textarea element
+      var tempTextarea = document.createElement('textarea');
+      tempTextarea.value = text;
+      document.body.appendChild(tempTextarea);
+
+      // Copy the value to the clipboard
+      tempTextarea.select();
+      tempTextarea.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+
+      // Remove the temporary textarea
+      document.body.removeChild(tempTextarea);
+    }
+  </script>
+</head>
+<body onload="initEditor()">
+  <h1>Word Replacement</h1>
+
+  <h3>Variables and Replacements</h3>
+  <textarea id="variables-textarea" rows="5" cols="50" style="width: 100%;"></textarea>
+
+  <h3>Text</h3>
+  <textarea id="text-textarea" rows="5" cols="50"></textarea>
+
+  <br>
+  <button onclick="replaceWords()">Replace Words</button>
+  <button onclick="copyToClipboard()">Copy to Clipboard</button>
+
+  <script>
+    // Retrieve the stored values from localStorage for the textareas
+    var storedVariablesValue = localStorage.getItem('variablesValue');
+    if (storedVariablesValue) {
+      document.getElementById('variables-textarea').value = storedVariablesValue;
+    }
+    var storedTextValue = localStorage.getItem('textValue');
+    if (storedTextValue) {
+      document.getElementById('text-textarea').value = storedTextValue;
+    }
+
+    // Add event listener to store the values in localStorage when the textareas are modified
+    document.getElementById('variables-textarea').addEventListener('input', function(e) {
+      localStorage.setItem('variablesValue', e.target.value);
+    });
+    document.getElementById('text-textarea').addEventListener('input', function(e) {
+      localStorage.setItem('textValue', e.target.value);
+    });
+  </script>
+</body>
+</html>

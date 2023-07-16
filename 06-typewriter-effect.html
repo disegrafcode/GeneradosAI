@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Typewriter Effect</title>
+    <style>
+        #typewriter {
+            font-family: monospace;
+            font-size: 16px;
+        }
+
+        .caret {
+            display: inline-block;
+            width: 0.25em;
+            height: 1em;
+            background-color: rgb(0, 0, 0);
+            animation: blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes blink-caret {
+
+            from,
+            to {
+                opacity: 0
+            }
+
+            50% {
+                opacity: 1
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Typewriter Effect</h1>
+    <p>
+        <span id="typewriter"></span>
+        <span class="caret"></span>
+    </p>
+
+    <script>const text = "Hello, World!"; // The text to be displayed
+        const speed = 100; // The speed of typing (in milliseconds)
+        const typewriter = document.getElementById('typewriter');
+        const caret = document.querySelector('.caret');
+        let i = 0;
+
+        function typeWriter() {
+            if (i < text.length) {
+                typewriter.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, speed);
+            }
+        }
+
+        typeWriter();
+    </script>
+</body>
+
+</html>

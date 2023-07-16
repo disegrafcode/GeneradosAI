@@ -94,6 +94,26 @@
             xhr.onload = function () {
                 if (xhr.status === 200) {
                     sidebar.innerHTML = xhr.responseText;
+
+                    /* ADD SEARCH FUNCTION */
+                    const searchInput = document.getElementById('search-input');
+                    const list = document.getElementById('list').getElementsByTagName('li');
+                    
+                    searchInput.addEventListener('input', function () {
+                        const filter = searchInput.value.toLowerCase();
+                        for (let i = 0; i < list.length; i++) {
+                            const item = list[i];
+                            const text = item.innerText.toLowerCase();
+
+                            if (text.indexOf(filter) > -1) {
+                                item.style.display = '';
+                            } else {
+                                item.style.display = 'none';
+                            }
+                        }
+                    });
+                    /* ADD SEARCH FUNCTION */
+
                 } else {
                     console.log("Error loading external HTML file.");
                 }

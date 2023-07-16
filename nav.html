@@ -1,4 +1,5 @@
-<ul class="list-group">
+<input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+<ul class="list-group" id="list">
     <li onclick="loadIframe('01-dropdown.html')" title="Se puede usar como custom select">
         01-dropdown
     </li>
@@ -8,7 +9,21 @@
     <li onclick="loadIframe('03-custom-select-base.html')" title="Este es Base, Usa select y lo cambia cuando se cambi el listado">
         03-custom-select-base
     </li>
-    
+    <li onclick="loadIframe('04-simple-text-reemplace.html')" title="">
+        04-simple-text-reemplace
+    </li>
+    <li onclick="loadIframe('05-complete-text-reemplace.html')" title="">
+        05-complete-text-reemplace
+    </li>
+    <li onclick="loadIframe('06-typewriter-effect.html')" title="">
+        06-typewriter-effect
+    </li>
+    <li onclick="loadIframe('07-CSS-buttons-hover-effects.html')" title="">
+        07-CSS-buttons-hover-effects
+    </li>
+    <li onclick="loadIframe('08-simple-filter-list.html')" title="">
+        08-simple-filter-list
+    </li>
 </ul>
 
 <style>
@@ -24,4 +39,11 @@
         background-color: black;
         color: white;
     }
+    #search-input
+    {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 20px;
+    }
 </style>
+
