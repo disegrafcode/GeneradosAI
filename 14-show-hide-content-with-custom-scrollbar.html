@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .content-container {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid black;
+        padding: 10px;
+      }
+
+      .content-container::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .content-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      .content-container::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+      }
+
+      .content-container::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+      }
+
+      .show-button {
+        background: black;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content-container">
+      <p>Line 1</p>
+      <p>Line 2</p>
+      <p>Line 3</p>
+      <p>Line 4</p>
+      <p>Line 5</p>
+      <p>Line 6</p>
+      <p>Line 7</p>
+      <p>Line 8</p>
+      <p>Line 9</p>
+      <p>Line 10</p>
+    </div>
+
+    <div class="button-container">
+      <button class="show-button" onclick="toggleContentVisibility()">Show All Content</button>
+    </div>
+
+    <script>
+      function toggleContentVisibility() {
+        var contentContainer = document.querySelector(".content-container");
+        var showButton = document.querySelector(".show-button");
+
+        if (contentContainer.style.overflowY === "visible") {
+          contentContainer.style.overflowY = "auto";
+          contentContainer.style.maxHeight = "200px";
+          showButton.textContent = "Show All Content";
+        } else {
+          contentContainer.style.overflowY = "visible";
+          contentContainer.style.maxHeight = "none";
+          showButton.textContent = "Hide Content";
+        }
+      }
+    </script>
+  </body>
+</html>

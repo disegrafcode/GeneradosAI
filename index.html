@@ -3,10 +3,12 @@
 
 <head>
     <title>Simple Sidebar Responsive</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        *{
+        * {
             box-sizing: border-box;
         }
+
         body {
             font-family: sans-serif;
             padding: 0;
@@ -54,15 +56,17 @@
             text-decoration: none;
             color: #000;
         }
-        iframe
-        {
+
+        iframe {
             width: 100%;
             height: 100%;
             position: absolute;
             top: 0;
             left: 0;
             overflow: auto;
+            overflow-x: hidden;
         }
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -76,7 +80,10 @@
                 float: none;
             }
         }
-    </style>  
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
@@ -98,7 +105,7 @@
                     /* ADD SEARCH FUNCTION */
                     const searchInput = document.getElementById('search-input');
                     const list = document.getElementById('list').getElementsByTagName('li');
-                    
+
                     searchInput.addEventListener('input', function () {
                         const filter = searchInput.value.toLowerCase();
                         for (let i = 0; i < list.length; i++) {
@@ -126,17 +133,16 @@
             loadExternalHTML();
         };
 
-        function loadIframe(url)
-        {
+        function loadIframe(url) {
             /* CLEAR SELECTED */
             let list = document.querySelectorAll("ul.list-group li");
-            list.forEach(function(elem) {
+            list.forEach(function (elem) {
                 elem.classList.remove("active");
             });
             /* CLEAR SELECTED */
             let element = this.event.target;
             element.classList.add("active");
-            document.getElementById("iframe").setAttribute("src",url);
+            document.getElementById("iframe").setAttribute("src", url);
         }
     </script>
 </body>

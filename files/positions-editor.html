@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Image Editor</title>
+  <style>
+    #container {
+      position: relative;
+      width: 500px;
+      height: 300px;
+      border: 1px solid black;
+      overflow: hidden;
+    }
+
+    #container img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    #zoom-controls {
+      margin-top: 10px;
+    }
+
+    #zoom-controls button {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Image Editor</h1>
+  <div id="container">
+  </div>
+  <div id="zoom-controls">
+    <button onclick="zoomIn()">Zoom In</button>
+    <button onclick="zoomOut()">Zoom Out</button>
+  </div>
+  <br>
+  <input type="file" id="image-upload">
+  <button onclick="addImage()">Add Image</button>
+  <button onclick="removeImage()">Remove Image</button>
+  <br>
+  <label for="position-x">Position X:</label>
+  <input type="text" id="position-x" oninput="applyChanges()" value="">
+  <br>
+  <label for="position-y">Position Y:</label>
+  <input type="text" id="position-y" oninput="applyChanges()" value="">
+  <br>
+  <label for="width">Width:</label>
+  <input type="text" id="width" oninput="applyChanges()" value="">
+  <br>
+  <label for="height">Height:</label>
+  <input type="text" id="height" oninput="applyChanges()" value="">
+  <br>
+  <label for="container-width">Container Width:</label>
+  <input type="text" id="container-width" oninput="resizeContainer()" value="500px">
+  <br>
+  <label for="container-height">Container Height:</label>
+  <input type="text" id="container-height" oninput="resizeContainer()" value="300px">
+  <br>
+
+  <script>let imageCount = 0;
+    let selectedImage = null;
+    let zoomScale = 1;
+    
+    function addImage() {
+      const container = document.getElementById('container');
+      const imageUpload = document.getElementById('image-upload');
+    
+      const image = document.createElement('img');
+      image.src = URL.createObjectURL(imageUpload.files[0]);
+    
+      container.appendChild(image);
+    
+      imageCount++;
+    
+      // Clear select input
+      clearForm();
+    
+      // Save image data to local storage
+      saveImageData();
+    }
+    
+    function removeImage() {
+      const container = document.getElementById('container');
+      const imageCount = container.childElementCount;
+    
+      if (imageCount > 0) {
+        const lastImage = container.lastElementChild;
+        container.removeChild(lastImage);
+    
+        // Check if the removed image was selected
+        if (lastImage === selectedImage) {
+          selectedImage = null;
+          clearForm();
+        }
+    
+        // Save image data to local storage
+        saveImageData();
+      }
+    }
+    
+    function selectImage(image) {
+      // Remove selection from the previously selected image
+      if (selectedImage) {
+        selectedImage.style.border = 'none';
+      }
+    
+      // Set the newly selected image and highlight it
+      selectedImage = image;
+      selectedImage.style.border = '2px solid red';
+    
+      // Retrieve the size and position values and update the form inputs
+      const positionXInput = document.getElementById('position-x');
+      const positionYInput = document.getElementById('position-y');
+      const widthInput = document.getElementById('width');
+      const heightInput = document.getElementById('height');
+    
+      positionXInput.value = selectedImage.style.left || '';
+      positionYInput.value = selectedImage.style.top || '';
+      widthInput.value = selectedImage.style.width || '';
+      heightInput.value = selectedImage.style.height || '';
+    }
+    
+    function applyChanges() {
+      if (!selectedImage) {
+        return;
+      }
+    
+      const positionXInput = document.getElementById('position-x');
+      const positionYInput = document.getElementById('position-y');
+      const widthInput = document.getElementById('width');
+      const heightInput = document.getElementById('height');
+    
+      selectedImage.style.left = positionXInput.value;
+      selectedImage.style.top = positionYInput.value;
+      selectedImage.style.width = widthInput.value;
+      selectedImage.style.height = heightInput.value;
+    
+      // Save image data to local storage
+      saveImageData();
+    }
+    
+    function resizeContainer() {
+      const container = document.getElementById('container');
+      const containerWidthInput = document.getElementById('container-width');
+      const containerHeightInput = document.getElementById('container-height');
+    
+      const containerWidth = containerWidthInput.value;
+      const containerHeight = containerHeightInput.value;
+    
+      container.style.width = containerWidth;
+      container.style.height = containerHeight;
+    
+      // Save container data to local storage
+      saveContainerData();
+    }
+    
+    function clearForm() {
+      const positionXInput = document.getElementById('position-x');
+      const positionYInput = document.getElementById('position-y');
+      const widthInput = document.getElementById('width');
+      const heightInput = document.getElementById('height');
+    
+      positionXInput.value = '';
+      positionYInput.value = '';
+      widthInput.value = '';
+      heightInput.value = '';
+    }
+    
+    function zoomIn() {
+      zoomScale += 0.1;
+      applyZoom();
+    }
+    
+    function zoomOut() {
+      if (zoomScale <= 0.1) {
+        return;
+      }
+      zoomScale -= 0.1;
+      applyZoom();
+    }
+    
+    function applyZoom() {
+      const container = document.getElementById('container');
+      container.style.transform = `scale(${zoomScale})`;
+    }
+    
+    function saveImageData() {
+      localStorage.setItem('imageCount', imageCount);
+    }
+    
+    function saveContainerData() {
+      const containerWidthInput = document.getElementById('container-width');
+      const containerHeightInput = document.getElementById('container-height');
+    
+      localStorage.setItem('containerWidth', containerWidthInput.value);
+      localStorage.setItem('containerHeight', containerHeightInput.value);
+    }
+    
+    function loadImageData() {
+      const savedImageCount = localStorage.getItem('imageCount');
+    
+      if (savedImageCount) {
+        imageCount = parseInt(savedImageCount);
+      }
+    
+      for (let i = 0; i < imageCount; i++) {
+        const image = document.createElement('img');
+        image.src = localStorage.getItem(`imageSrc-${i}`);
+    
+        document.getElementById('container').appendChild(image);
+    
+        // Add click event listener to select image
+        image.addEventListener('click', function () {
+          selectImage(image);
+        });
+      }
+    }
+    
+    function loadContainerData() {
+      const containerWidthInput = document.getElementById('container-width');
+      const containerHeightInput = document.getElementById('container-height');
+    
+      const savedContainerWidth = localStorage.getItem('containerWidth');
+      const savedContainerHeight = localStorage.getItem('containerHeight');
+    
+      if (savedContainerWidth) {
+        containerWidthInput.value = savedContainerWidth;
+      }
+    
+      if (savedContainerHeight) {
+        containerHeightInput.value = savedContainerHeight;
+      }
+    }
+    
+    // Load saved image and container data on page load
+    window.onload = function () {
+      loadImageData();
+      loadContainerData();
+    };
+    </script>
+</body>
+</html>

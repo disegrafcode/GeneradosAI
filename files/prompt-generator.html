@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        #prompt {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #generate-btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #generate-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prompt Generator</h1>
+    <div id="prompt"></div>
+    <button id="generate-btn">Generate Prompt</button>
+
+    <script>// Array of prompts
+        const prompts = [
+            "Write a short story about a magical adventure.",
+            "Describe your dream vacation destination.",
+            "Create a poem about nature and its beauty.",
+            "Design a new gadget that could change the world.",
+            "Write a letter to your future self.",
+            "Describe a memorable moment from your childhood.",
+            "If you could have any superpower, what would it be and why?",
+            "Write about a character who can time-travel but is afraid to change anything.",
+            "Describe an alien species and their unique culture.",
+            "Create a dialogue between two animals in the wild."
+        ];
+        
+        function generatePrompt() {
+            const randomIndex = Math.floor(Math.random() * prompts.length);
+            const promptText = prompts[randomIndex];
+            document.getElementById("prompt").textContent = promptText;
+        }
+        
+        document.getElementById("generate-btn").addEventListener("click", generatePrompt);
+        
+        // Generate a prompt on page load
+        generatePrompt();
+        </script>
+</body>
+</html>

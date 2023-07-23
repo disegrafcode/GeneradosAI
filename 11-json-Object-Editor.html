@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JSON to Inputs</title>
+  <style>
+    .block {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <textarea id="jsonTextarea" rows="10" cols="50">[
+    {
+      "name": "Home Button",
+      "type": "button",
+      "text": "Button name",
+      "key": "url",
+      "value": "https://jsoneditoronline.org/",
+      "description": ""
+    },
+    {
+      "name": "featured image",
+      "type": "image",
+      "text": "image_alt",
+      "key": "image",
+      "value": "https://jsoneditoronline.org/",
+      "description": ""
+    },
+    {
+      "name": "Gallery",
+      "type": "gallery",
+      "text": "",
+      "key": "arrayImages",
+      "value": "1,2,3,4",
+      "description": ""
+    },
+    {
+      "name": "Media Full",
+      "type": "media",
+      "text": "media title",
+      "key": "image",
+      "value": "1,5,3.8",
+      "description": "full media description"
+    }
+  ]</textarea>
+  <div id="blocksContainer"></div>
+  <button id="addBlockBtn">Add Block</button>
+
+  <script>
+    // Function to convert JSON to inputs and update JSON
+    function convertJSONToInputs(json) {
+      const blocksContainer = document.getElementById('blocksContainer');
+      blocksContainer.innerHTML = '';
+
+      json.forEach((block, index) => {
+        const blockDiv = document.createElement('div');
+        blockDiv.className = 'block';
+
+        Object.entries(block).forEach(([key, value]) => {
+          const label = document.createElement('label');
+          label.textContent = `${key}: `;
+
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = value;
+
+          input.addEventListener('input', () => {
+            json[index][key] = input.value;
+            updateTextarea(json);
+          });
+
+          blockDiv.appendChild(label);
+          blockDiv.appendChild(input);
+        });
+
+        const upBtn = document.createElement('button');
+        upBtn.textContent = 'Up';
+        upBtn.addEventListener('click', () => {
+          if (index > 0) {
+            const temp = json[index - 1];
+            json[index - 1] = json[index];
+            json[index] = temp;
+            convertJSONToInputs(json);
+            updateTextarea(json);
+          }
+        });
+
+        const downBtn = document.createElement('button');
+        downBtn.textContent = 'Down';
+        downBtn.addEventListener('click', () => {
+          if (index < json.length - 1) {
+            const temp = json[index + 1];
+            json[index + 1] = json[index];
+            json[index] = temp;
+            convertJSONToInputs(json);
+            updateTextarea(json);
+          }
+        });
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', () => {
+          json.splice(index, 1);
+          convertJSONToInputs(json);
+          updateTextarea(json);
+        });
+
+        blockDiv.appendChild(upBtn);
+        blockDiv.appendChild(downBtn);
+        blockDiv.appendChild(deleteBtn);
+        blocksContainer.appendChild(blockDiv);
+      });
+    }
+
+    // Function to update the textarea with the updated JSON
+    function updateTextarea(json) {
+      const jsonTextarea = document.getElementById('jsonTextarea');
+      jsonTextarea.value = JSON.stringify(json, null, 2);
+    }
+
+    // Function to add a new block
+    function addBlock() {
+      const jsonTextarea = document.getElementById('jsonTextarea');
+      const json = JSON.parse(jsonTextarea.value);
+
+      json.push({
+        name: '',
+        type: '',
+        text: '',
+        key: '',
+        value: '',
+        description: ''
+      });
+
+      convertJSONToInputs(json);
+      updateTextarea(json);
+    }
+
+    // Function to initialize the application
+    function init() {
+      const jsonTextarea = document.getElementById('jsonTextarea');
+      const addBlockBtn = document.getElementById('addBlockBtn');
+
+      // Parse the JSON from textarea
+      const json = JSON.parse(jsonTextarea.value);
+
+      // Convert JSON to inputs and update textarea
+      convertJSONToInputs(json);
+      updateTextarea(json);
+
+      // Add event listener to add block button
+      addBlockBtn.addEventListener('click', addBlock);
+    }
+
+    // Initialize the application
+    init();
+  </script>
+</body>
+</html>

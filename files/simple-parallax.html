@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* CSS styles for the parallax container and content */
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .parallax-container {
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .parallax-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 24px;
+    }
+
+    /* Adjust the parallax background styles */
+    .parallax-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://4kwallpapers.com/images/walls/thumbs_3t/4523.jpg');
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <div class="parallax-container">
+    <div class="parallax-content">
+      <h1>Scrolling Parallax Example</h1>
+      <h4>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h4>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Feugiat nibh sed pulvinar proin gravida hendrerit lectus. Magna eget est lorem ipsum dolor. Sit amet consectetur adipiscing elit ut aliquam purus sit. Mauris rhoncus aenean vel elit scelerisque. Ac auctor augue mauris augue neque gravida in fermentum et. Lectus arcu bibendum at varius vel pharetra vel turpis nunc. Id diam vel quam elementum pulvinar etiam. Hendrerit dolor magna eget est lorem ipsum dolor sit. Vel eros donec ac odio tempor orci dapibus ultrices. Nunc congue nisi vitae suscipit tellus mauris a diam maecenas. Eu augue ut lectus arcu. Malesuada fames ac turpis egestas sed. Viverra ipsum nunc aliquet bibendum enim facilisis gravida. Nunc consequat interdum varius sit amet mattis vulputate enim. Ac tortor dignissim convallis aenean et tortor at. Et ultrices neque ornare aenean euismod.
+
+
+      </p>
+    </div>
+    <div class="parallax-background"></div>
+  </div>
+
+  <script>
+    // Function to handle scroll event and update parallax effect
+    function handleParallax() {
+      var parallaxContainer = document.querySelector('.parallax-container');
+      var parallaxBackground = document.querySelector('.parallax-background');
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      parallaxBackground.style.transform = 'translateY(' + scrollTop * 0.5 + 'px)';
+    }
+
+    // Attach the scroll event listener
+    window.addEventListener('scroll', handleParallax);
+
+    // Initial parallax effect
+    handleParallax();
+  </script>
+</body>
+</html>

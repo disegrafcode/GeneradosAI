@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Snippet Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <style>
+        /* TABLE STYLE */
+        body,html
+        {
+            max-width: 100vw;
+            position: relative;
+        }
+        table {
+            border-collapse: collapse;
+            max-width: 100vw;
+        }
+    
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            max-width: 600px;
+        }
+    
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    
+        #title,
+        #code {
+            width: 100%;
+            display: block;
+            margin-bottom: 20px;
+        }
+        /* TABLE STYLE */
+        /* TOGGLE BUTTON AND CONTAINER */
+        .content-container {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        .content-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .content-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .content-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .show-button {
+            background: #424242;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        /* TOGGLE BUTTON AND CONTAINER */
+    </style>
+</head>
+
+<body>
+    <h1>Snippet Manager</h1>
+    <form id="snippet-form">
+        <input type="hidden" id="snippet-id">
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" required>
+        <label for="code">Code:</label><br>
+        <textarea id="code" required  cols="30" rows="10" ></textarea><br>
+        <button type="submit">Save Snippet</button>
+        <button type="button" id="cancel-btn">Cancel</button>
+    </form>
+    <h2>Snippets:</h2>
+    <p><input type="text" id="search-input" placeholder="Search..." autocomplete="off"></p>
+    <table>
+        <thead>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Code</th>
+            <th colspan="3">Actions</th>
+        </thead>
+        <tbody id="snippets-table" ></tbody>
+    </table>
+    <script>
+        // Function to make an AJAX request
+        function ajaxRequest(url, method, data, callback) {
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        callback(xhr.responseText);
+                    } else {
+                        console.error('Request failed with status ' + xhr.status);
+                    }
+                }
+            };
+
+            xhr.open(method, url, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(data);
+        }
+
+        // Load snippets from the JSON file
+        function loadSnippets() {
+            ajaxRequest('snippets.php', 'GET', null, function (response) {
+                const snippets = JSON.parse(response);
+                displaySnippets(snippets);
+            });
+        }
+
+        // Save a snippet to the JSON file
+        function saveSnippet(snippet) {
+            const data = JSON.stringify(snippet);
+            ajaxRequest('snippets.php', 'POST', data, function () {
+                loadSnippets(); // Reload snippets after saving
+            });
+        }
+
+        // Update a snippet in the JSON file
+        function updateSnippet(snippet) {
+            const data = JSON.stringify(snippet);
+            ajaxRequest('snippets.php', 'PUT', data, function () {
+                loadSnippets(); // Reload snippets after updating
+            });
+        }
+
+        // Delete a snippet from the JSON file
+        function deleteSnippet(id) {
+            let result = confirm("Are you sure you want to delete this?");
+            if (!result) {
+                return;
+            }
+            ajaxRequest('snippets.php?id=' + id, 'DELETE', null, function () {
+                loadSnippets(); // Reload snippets after deleting
+            });
+        }
+
+        // Display the snippets in a table
+        function displaySnippets(snippets) {
+            const snippetsTable = document.getElementById('snippets-table');
+            snippetsTable.innerHTML = '';
+
+            for (let i = 0; i < snippets.length; i++) {
+                const row = document.createElement('tr');
+                row.setAttribute("data-filter", snippets[i].title)
+
+                const idCell = document.createElement('td');
+                row.setAttribute("data-id", snippets[i].id);
+                idCell.textContent = i+1;
+
+                const titleCell = document.createElement('td');
+                titleCell.textContent = snippets[i].title;
+
+                const codeCell = document.createElement('td');
+                const codePre = document.createElement('pre');
+                codePre.classList.add('content-container');
+                const codeElem = document.createElement('code');
+                codeElem.textContent = snippets[i].code;
+                codeElem.classList.add('language-javascript'); // Adjust the language class based on your code type
+                
+                
+                codePre.appendChild(codeElem);                
+                codeCell.appendChild(codePre);
+
+                const btnToggle = document.createElement('button');
+                btnToggle.innerText="Show All Content";
+                btnToggle.classList.add("show-button");
+                btnToggle.setAttribute("onclick", "toggleContentVisibility()");
+                codeCell.appendChild(btnToggle);
+
+                const copyCell = document.createElement('td');
+                const copyButton = document.createElement('button');
+                copyButton.textContent = 'Copy';
+                copyButton.addEventListener('click', function () {
+                    copyToClipboard(snippets[i].code);
+                });
+                copyCell.appendChild(copyButton);
+
+                const editCell = document.createElement('td');
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.addEventListener('click', function () {
+                    editSnippet(snippets[i]);
+                });
+                editCell.appendChild(editButton);
+
+                const deleteCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', function () {
+                    deleteSnippet(snippets[i].id);
+                });
+                deleteCell.appendChild(deleteButton);
+
+                row.appendChild(idCell);
+                row.appendChild(titleCell);
+                row.appendChild(codeCell);
+                row.appendChild(copyCell);
+                row.appendChild(editCell);
+                row.appendChild(deleteCell);
+                snippetsTable.appendChild(row);
+            }
+
+            Prism.highlightAll(); // Apply syntax highlighting
+        }
+
+        // Function to copy code snippet to clipboard
+        function copyToClipboard(code) {
+            const textarea = document.createElement('textarea');
+            textarea.value = code;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+
+        // Function to handle editing a snippet
+        function editSnippet(snippet) {
+            document.getElementById('snippet-id').value = snippet.id;
+            document.getElementById('title').value = snippet.title;
+            document.getElementById('code').value = snippet.code;
+        }
+
+        // Function to clear the form
+        function clearForm() {
+            document.getElementById('snippet-id').value = '';
+            document.getElementById('title').value = '';
+            document.getElementById('code').value = '';
+        }
+
+        // Submit form to create or update a snippet
+        document.getElementById('snippet-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const snippetId = document.getElementById('snippet-id').value;
+            const title = document.getElementById('title').value;
+            const code = document.getElementById('code').value;
+
+            if (title.trim() !== '' && code.trim() !== '') {
+                if (snippetId) {
+                    // Update existing snippet
+                    const updatedSnippet = {
+                        id: snippetId,
+                        title: title,
+                        code: code
+                    };
+                    updateSnippet(updatedSnippet);
+                } else {
+                    // Create new snippet
+                    const newSnippet = {
+                        id: '',
+                        title: title,
+                        code: code
+                    };
+                    saveSnippet(newSnippet);
+                }
+
+                // Clear the form
+                clearForm();
+            }
+        });
+
+        // Cancel button clears the form
+        document.getElementById('cancel-btn').addEventListener('click', function () {
+            clearForm();
+        });
+
+        /* ADD SEARCH FUNCTION */
+            const searchInput = document.getElementById('search-input');
+            const list = document.getElementById('snippets-table').getElementsByTagName('tr');
+
+            searchInput.addEventListener('input', function () {
+                const filter = searchInput.value.toLowerCase();
+                for (let i = 0; i < list.length; i++) {
+                    const item = list[i];
+                    const text = item.getAttribute('data-filter').toLowerCase();
+
+                    if (text.indexOf(filter) > -1) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                }
+            });
+        /* ADD SEARCH FUNCTION */
+
+        /* TOGGLE TO SHOW ALL CONTENT */
+        function toggleContentVisibility() {
+            const target=this.event.target;
+            const parent = target.parentNode;           
+            const contentContainer = parent.querySelector(".content-container");
+
+            if (contentContainer.style.overflowY === "visible") {
+            contentContainer.style.overflowY = "auto";
+            contentContainer.style.maxHeight = "200px";
+            target.textContent = "Show All Content";
+            } else {
+            contentContainer.style.overflowY = "visible";
+            contentContainer.style.maxHeight = "none";
+            target.textContent = "Hide Content";
+            }
+        }
+        /* TOGGLE TO SHOW ALL CONTENT */
+
+        // Load snippets when the page is loaded
+        window.onload = function () {
+            loadSnippets();
+        };
+
+    </script>
+</body>
+
+</html>
