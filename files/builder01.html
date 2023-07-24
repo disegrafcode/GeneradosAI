@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bootstrap Builder</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+  <style>
+    body {
+      padding: 20px;
+    }
+
+    .drop-zone {
+      min-height: 100px;
+      border: 2px dashed #ccc;
+      margin-bottom: 20px;
+    }
+
+    .component {
+      cursor: pointer;
+      margin: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Bootstrap Builder</h1>
+
+  <div class="drop-zone" id="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+  <h3>Available Components</h3>
+  <div class="component" draggable="true" ondragstart="drag(event)" ontouchstart="touchStart(event)" ontouchend="touchEnd(event)" data-component="button">Button</div>
+  <div class="component" draggable="true" ondragstart="drag(event)" ontouchstart="touchStart(event)" ontouchend="touchEnd(event)" data-component="card">Card</div>
+  <!-- Add more Bootstrap components here -->
+
+  <script>
+    let touchElement = null;
+
+    function allowDrop(event) {
+      event.preventDefault();
+    }
+
+    function drag(event) {
+      event.dataTransfer.setData("text", event.target.dataset.component);
+    }
+
+    function drop(event) {
+      event.preventDefault();
+      const component = event.dataTransfer.getData("text");
+      const dropZone = document.getElementById("dropZone");
+
+      switch (component) {
+        case "button":
+          dropZone.insertAdjacentHTML('beforeend', '<button class="btn btn-primary">Click Me</button>');
+          break;
+        case "card":
+          dropZone.insertAdjacentHTML('beforeend', `
+            <div class="card" style="width: 18rem;">
+              <img src="..." class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Card Title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              </div>
+            </div>
+          `);
+          break;
+        // Add more cases for other components
+      }
+    }
+
+    function touchStart(event) {
+      touchElement = event.target;
+      event.preventDefault();
+    }
+
+    function touchEnd(event) {
+      if (touchElement === event.target) {
+        const component = event.target.dataset.component;
+        const dropZone = document.getElementById("dropZone");
+
+        switch (component) {
+          case "button":
+            dropZone.insertAdjacentHTML('beforeend', '<button class="btn btn-primary">Click Me</button>');
+            break;
+          case "card":
+            dropZone.insertAdjacentHTML('beforeend', `
+              <div class="card" style="width: 18rem;">
+                <img src="..." class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">Card Title</h5>
+                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+              </div>
+            `);
+            break;
+          // Add more cases for other components
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

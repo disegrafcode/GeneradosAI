@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bootstrap Customizer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+  <style>
+    body {
+      padding: 20px;
+    }
+
+    /* Update Bootstrap primary color */
+    .btn-primary,
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    /* Update Bootstrap background color */
+    body {
+      background-color: var(--background-color);
+    }
+
+    /* Update text color */
+    body {
+      color: var(--text-color);
+    }
+
+    /* Update heading styles */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: var(--heading-color);
+    }
+
+    /* Update link styles */
+    a {
+      color: var(--link-color);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Bootstrap Customizer</h1>
+  
+  <form>
+    <div class="form-group">
+      <label for="primaryColor">Primary Color:</label>
+      <input type="color" id="primaryColor" name="primaryColor" value="#007bff">
+    </div>
+
+    <div class="form-group">
+      <label for="backgroundColor">Background Color:</label>
+      <input type="color" id="backgroundColor" name="backgroundColor" value="#f8f9fa">
+    </div>
+
+    <div class="form-group">
+      <label for="textColor">Text Color:</label>
+      <input type="color" id="textColor" name="textColor" value="#212529">
+    </div>
+
+    <div class="form-group">
+      <label for="headingColor">Heading Color:</label>
+      <input type="color" id="headingColor" name="headingColor" value="#007bff">
+    </div>
+
+    <div class="form-group">
+      <label for="linkColor">Link Color:</label>
+      <input type="color" id="linkColor" name="linkColor" value="#007bff">
+    </div>
+
+    <button type="button" onclick="applyCustomStyles()" class="btn btn-primary">Apply Custom Styles</button>
+  </form>
+
+  <h2>Live Preview</h2>
+  <p>This is a sample text to preview the text color.</p>
+  <h3>Sample Heading</h3>
+  <p>This is a sample paragraph with a <a href="#">link</a>.</p>
+
+  <script>
+    function applyCustomStyles() {
+      const primaryColor = document.getElementById("primaryColor").value;
+      const backgroundColor = document.getElementById("backgroundColor").value;
+      const textColor = document.getElementById("textColor").value;
+      const headingColor = document.getElementById("headingColor").value;
+      const linkColor = document.getElementById("linkColor").value;
+
+      const styleTag = document.createElement("style");
+      styleTag.innerHTML = `
+        :root {
+          --primary-color: ${primaryColor};
+          --background-color: ${backgroundColor};
+          --text-color: ${textColor};
+          --heading-color: ${headingColor};
+          --link-color: ${linkColor};
+        }
+      `;
+
+      document.head.appendChild(styleTag);
+    }
+
+    // Initialize the custom styles when the page loads
+    applyCustomStyles();
+  </script>
+</body>
+
+</html>
