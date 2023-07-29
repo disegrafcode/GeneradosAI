@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CSS Gradient Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .inputGrad {
+            width: 300px;
+            margin-top: 10px;
+            padding: 5px;
+        }
+
+        #editor-gradient {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>CSS Gradient Editor</h1>
+    <input type="text" class="inputGrad" id="gradientResult" style="color: white;"
+        value="background: linear-gradient(267deg, #ff0000, #0000ff);">
+    <div id="editor-gradient">
+        <label>Start Color:
+            <input type="color" id="startColor" value="#ff0000">
+        </label>
+        <label>End Color:
+            <input type="color" id="endColor" value="#0000ff">
+        </label>
+        <label>Direction:
+            <input type="range" id="direction" min="0" max="360" step="1">
+        </label>
+    </div>
+
+    <script>
+        const editorGradient = document.getElementById('editor-gradient');
+        const gradientResult = document.getElementById('gradientResult');
+        const startColorInput = document.getElementById('startColor');
+        const endColorInput = document.getElementById('endColor');
+        const directionInput = document.getElementById('direction');
+
+        function updateGradient() {
+            const gradient = `linear-gradient(${directionInput.value}deg, ${startColorInput.value}, ${endColorInput.value})`;
+
+            gradientResult.style.background = gradient;
+            gradientResult.value = `background: ${gradient};`;
+        }
+
+        gradientResult.addEventListener('focus', () => {
+            editorGradient.style.display = 'block';
+
+            // Detect clicks outside of the editor-gradient container
+            document.addEventListener('click', outsideClickHandler);
+        });
+
+        function outsideClickHandler(event) {
+            if (!editorGradient.contains(event.target) && event.target !== gradientResult) {
+                editorGradient.style.display = 'none';
+                document.removeEventListener('click', outsideClickHandler);
+            }
+        }
+
+        // Add event listeners to update the gradient automatically
+        startColorInput.addEventListener('input', () => {
+            updateGradient();
+            updateGradientResultInput();
+        });
+
+        endColorInput.addEventListener('input', () => {
+            updateGradient();
+            updateGradientResultInput();
+        });
+
+        directionInput.addEventListener('input', () => {
+            updateGradient();
+            updateGradientResultInput();
+        });
+
+        gradientResult.addEventListener('input', () => {
+            updateGradientResultInput();
+        });
+
+        function updateGradientResultInput() {
+            const gradient = `linear-gradient(${directionInput.value}deg, ${startColorInput.value}, ${endColorInput.value})`;
+            gradientResult.value = `background: ${gradient};`;
+        }
+
+        // Call the function to set the initial gradient and result
+        updateGradient();
+    </script>
+</body>
+
+</html>

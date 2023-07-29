@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Edit Primary Color</title>
+</head>
+
+<body>
+    <h1>Edit Primary Color</h1>
+
+    <!-- Container for the primary color input, color preview, and additional inputs -->
+    <div id="colorContainer" style="display: inline-block; position: relative;">
+
+        <!-- Primary color input -->
+        <label for="primary-color">Primary Color:</label>
+        <input type="text" id="primary-color" class="inputTypeColor" value="#FFA500" />
+
+        <br>
+        <!-- sc color input -->
+        <label for="sc-color">sc Color:</label>
+        <input type="text" id="s-color" class="inputTypeColor" />
+
+
+
+        <!-- Additional inputs (hidden by default) -->
+        <div id="additionalInputs"
+            style="display: none; position: absolute; top: 100%; left: 0; background-color: #f9f9f9; padding: 10px;">
+            <label for="red">Red:</label>
+            <input type="range" id="red" min="0" max="255" step="1" />
+            <br>
+
+            <label for="green">Green:</label>
+            <input type="range" id="green" min="0" max="255" step="1" />
+            <br>
+
+            <label for="blue">Blue:</label>
+            <input type="range" id="blue" min="0" max="255" step="1" />
+            <br>
+
+            <!-- Alpha Slider for RGBA Mode -->
+            <label for="alpha-rgba">Alpha:</label>
+            <input type="range" id="alpha-rgba" min="0" max="1" step="0.01" />
+            <br>
+        </div>
+
+    </div>
+
+    <script>
+        let inputColorSelected = null;
+        const colorContainer = document.getElementById('colorContainer');
+        const additionalInputs = document.getElementById('additionalInputs');
+        const redInput = document.getElementById('red');
+        const greenInput = document.getElementById('green');
+        const blueInput = document.getElementById('blue');
+        const alphaRGBAInput = document.getElementById('alpha-rgba');
+        const listInputsColor = document.querySelectorAll('.inputTypeColor');
+
+        listInputsColor.forEach((item) => {
+            item.addEventListener('focus', chooseInputColor);
+            item.value = convertHexToRGBA(item.value);
+            inputColorSelected = item;
+            updateColorPreview();            
+        });
+
+        function chooseInputColor() {
+            inputColorSelected = event.target;
+            const offsets = inputColorSelected.getBoundingClientRect();
+            const bottom = offsets.bottom;
+            additionalInputs.style.top = `${inputColorSelected.offsetTop + inputColorSelected.offsetHeight}px`;
+            additionalInputs.style.left = `${inputColorSelected.offsetLeft}px`;
+
+            inputColorSelected.value = convertHexToRGBA(inputColorSelected.value);
+            inputColorSelected.addEventListener('input', updateColorPreview);
+            showAdditionalInputs();
+        }
+        // Function to show additional inputs when the primary color input is focused
+        function showAdditionalInputs() {
+            additionalInputs.style.display = 'block';
+            // Parse the primary color value and set the values to the additional inputs
+            const color = parseColor(inputColorSelected.value);
+            redInput.value = color.r;
+            greenInput.value = color.g;
+            blueInput.value = color.b;
+            alphaRGBAInput.value = color.a;
+            updateColorPreview();
+        }
+
+        function convertHexToRGBA(hexColor) {
+            // Remove '#' symbol if present
+            hexColor = hexColor.replace('#', '');
+            // Check if the input is a valid hexadecimal color
+            const hexRegex = /^[0-9A-Fa-f]{6}$|^[0-9A-Fa-f]{8}$/;
+            if (!hexRegex.test(hexColor)) {
+                return hexColor; // Return null if the input is not a valid hexadecimal color
+            }
+            // Convert the hexadecimal color to RGBA format
+            const r = parseInt(hexColor.substring(0, 2), 16);
+            const g = parseInt(hexColor.substring(2, 4), 16);
+            const b = parseInt(hexColor.substring(4, 6), 16);
+            const a = hexColor.length === 8 ? (parseInt(hexColor.substring(6, 8), 16) / 255).toFixed(2) : '1.0';
+            return `rgba(${r}, ${g}, ${b}, ${a})`;
+        }
+
+        // Function to hide additional inputs when the mouse leaves the area
+        function hideAdditionalInputs() {
+            additionalInputs.style.display = 'none';
+            if(inputColorSelected) inputColorSelected.blur();
+        }
+
+        // Function to update the primary color input with the current format
+        function updateInputColor() {
+            // Use the RGBA format with alpha from the alphaRGBAInput slider            
+            const red = redInput.value;
+            const green = greenInput.value;
+            const blue = blueInput.value;
+            const alpha = alphaRGBAInput.value;
+            inputColorSelected.value = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+            updateColorPreview();
+        }
+
+        // Function to update the color preview box
+        function updateColorPreview() {
+            inputColorSelected.value = convertHexToRGBA(inputColorSelected.value);
+            const color = parseColor(inputColorSelected.value);
+            inputColorSelected.style.backgroundColor = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+            inputColorSelected.style.color = invertColor(`rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`);
+            console.log(invertColor(`rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`));
+        }
+
+        function invertColor(colorRGBA) {
+            const rgbaRegex = /rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)/;
+            const matches = colorRGBA.match(rgbaRegex);
+
+            if (matches) {
+                const red = parseInt(matches[1]);
+                const green = parseInt(matches[2]);
+                const blue = parseInt(matches[3]);
+                const alpha = parseFloat(matches[4]);
+
+                // Calculate the inverted values
+                const invertedRed = 255 - red;
+                const invertedGreen = 255 - green;
+                const invertedBlue = 255 - blue;
+
+                // Ensure the values stay within the valid range (0 to 255)
+                const finalRed = Math.max(0, Math.min(255, invertedRed));
+                const finalGreen = Math.max(0, Math.min(255, invertedGreen));
+                const finalBlue = Math.max(0, Math.min(255, invertedBlue));
+
+                // Build the inverted color string in RGBA format
+                return `rgba(${finalRed}, ${finalGreen}, ${finalBlue}, 1 )`;
+            } 
+        }
+
+        // Function to parse the color values from the primary color input
+        function parseColor(colorValue) {
+            const rgbaRegex = /rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)/;
+            const hexRegex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
+
+            let matches;
+            if ((matches = colorValue.match(rgbaRegex))) {
+                const r = parseInt(matches[1], 10);
+                const g = parseInt(matches[2], 10);
+                const b = parseInt(matches[3], 10);
+                const a = parseFloat(matches[4]);
+                return { r, g, b, a };
+            }
+
+            // If the input value does not match the RGBA or hex format, return default values
+            return { r: 0, g: 0, b: 0, a: 1 };
+        }
+
+        // Add event listeners
+        colorContainer.addEventListener('mouseleave', hideAdditionalInputs);
+        redInput.addEventListener('input', updateInputColor);
+        greenInput.addEventListener('input', updateInputColor);
+        blueInput.addEventListener('input', updateInputColor);
+        alphaRGBAInput.addEventListener('input', updateInputColor);
+    </script>
+</body>
+
+</html>

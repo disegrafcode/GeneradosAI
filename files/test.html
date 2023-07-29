@@ -1,81 +1,104 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <style>
-      .content-container {
-        max-height: 200px;
-        overflow-y: auto;
-        border: 1px solid black;
-        padding: 10px;
+<head>
+  <title>WhatsApp-Like Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f2f2f2;
+    }
+
+    #chat-container {
+      width: 400px;
+      height: 500px;
+      margin: 20px auto;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow-y: scroll;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 10px;
+      margin: 5px;
+      border-radius: 10px;
+      clear: both;
+    }
+
+    .my-message {
+      background-color: #DCF8C6;
+      float: right;
+    }
+
+    .other-message {
+      background-color: #ECE5DD;
+      float: left;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      border: none;
+      border-top: 1px solid #ccc;
+      outline: none;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #25D366;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .user-typing {
+      color: #25D366;
+      font-size: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat-container">
+    <div class="message my-message">Hello! This is me.</div>
+    <div class="message other-message">Hi, this is the other user.</div>
+  </div>
+  <input type="text" id="input-message" placeholder="Type a message">
+  <button onclick="sendMessage()">Send</button>
+  <div class="user-typing" id="user-typing"></div>
+
+  <script>
+    const chatContainer = document.getElementById('chat-container');
+    const inputMessage = document.getElementById('input-message');
+    const userTyping = document.getElementById('user-typing');
+
+    function sendMessage() {
+      const message = inputMessage.value.trim();
+      if (message) {
+        addMessage(message, true);
+        inputMessage.value = '';
       }
+    }
 
-      .content-container::-webkit-scrollbar {
-        width: 8px;
-      }
+    function addMessage(message, isMyMessage) {
+      const messageDiv = document.createElement('div');
+      messageDiv.textContent = message;
+      messageDiv.className = 'message ' + (isMyMessage ? 'my-message' : 'other-message');
+      chatContainer.appendChild(messageDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
 
-      .content-container::-webkit-scrollbar-track {
-        background: #f1f1f1;
-      }
-
-      .content-container::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 4px;
-      }
-
-      .content-container::-webkit-scrollbar-thumb:hover {
-        background: #555;
-      }
-
-      .button-container {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 10px;
-      }
-
-      .show-button {
-        background: black;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        border-radius: 4px;
-        font-size: 14px;
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="content-container">
-      <p>Line 1</p>
-      <p>Line 2</p>
-      <p>Line 3</p>
-      <p>Line 4</p>
-      <p>Line 5</p>
-      <p>Line 6</p>
-      <p>Line 7</p>
-      <p>Line 8</p>
-      <p>Line 9</p>
-      <p>Line 10</p>
-    </div>
-
-    <div class="button-container">
-      <button class="show-button" onclick="toggleContentVisibility()">Show All Content</button>
-    </div>
-
-    <script>
-      function toggleContentVisibility() {
-        var contentContainer = document.querySelector(".content-container");
-        var showButton = document.querySelector(".show-button");
-
-        if (contentContainer.style.overflowY === "visible") {
-          contentContainer.style.overflowY = "auto";
-          contentContainer.style.maxHeight = "200px";
-          showButton.textContent = "Show All Content";
-        } else {
-          contentContainer.style.overflowY = "visible";
-          contentContainer.style.maxHeight = "none";
-          showButton.textContent = "Hide Content";
-        }
-      }
-    </script>
-  </body>
+    inputMessage.addEventListener('input', () => {
+      userTyping.textContent = inputMessage.value ? 'Typing...' : '';
+    });
+  </script>
+</body>
 </html>
