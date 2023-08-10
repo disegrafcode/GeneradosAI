@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enhanced Old VHS Effect</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+  }
+</style>
+</head>
+<body>
+<canvas id="vhsCanvas"></canvas>
+<script>
+  const canvas = document.getElementById('vhsCanvas');
+  const ctx = canvas.getContext('2d');
+  const image = new Image();
+  image.src = 'image-2.jpg'; // Replace with your image path
+
+  image.onload = () => {
+    canvas.width = image.width;
+    canvas.height = image.height;
+    ctx.drawImage(image, 0, 0);
+
+    // Apply enhanced old VHS effect function
+    function applyEnhancedOldVHSEffect() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0);
+
+      // Apply scanlines
+      const scanlineFrequency = 8;
+      for (let y = 0; y < canvas.height; y += scanlineFrequency) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+        ctx.fillRect(0, y, canvas.width, 2);
+      }
+
+      // Apply color shifts
+      const colorShiftAmount = 100;
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        data[i] += Math.floor(Math.random() * colorShiftAmount) - colorShiftAmount / 2;
+        data[i + 1] -= Math.floor(Math.random() * colorShiftAmount) - colorShiftAmount / 2;
+        data[i + 2] += Math.floor(Math.random() * colorShiftAmount) - colorShiftAmount / 2;
+      }
+
+      // Apply noise
+      const noiseIntensity = 40;
+      for (let i = 0; i < data.length; i += 4) {
+        const noise = (Math.random() - 0.5) * noiseIntensity;
+        data[i] += noise;
+        data[i + 1] += noise;
+        data[i + 2] += noise;
+      }
+
+      // Apply black and white noise
+      const bwNoiseIntensity = 30;
+      for (let i = 0; i < data.length; i += 4) {
+        const bwNoise = (Math.random() - 0.5) * bwNoiseIntensity;
+        data[i] += bwNoise;
+        data[i + 1] += bwNoise;
+        data[i + 2] += bwNoise;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    // Apply enhanced old VHS effect on button click
+    const vhsButton = document.createElement('button');
+    vhsButton.textContent = 'Apply Enhanced Old VHS Effect';
+    vhsButton.addEventListener('click', applyEnhancedOldVHSEffect);
+    document.body.appendChild(vhsButton);
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comic Style Speech Bubble Generator using Canvas</title>
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+  }
+  #canvasContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #000;
+    border-radius: 10px;
+    background-color: #fff;
+    position: relative;
+  }
+  #textInput {
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+<div>
+  <label for="bubbleDesign">Select Bubble Design:</label>
+  <select id="bubbleDesign">
+    <option value="normal">Normal</option>
+    <option value="rounded">Rounded</option>
+    <option value="thought">Thought</option>
+  </select>
+</div>
+<div id="canvasContainer">
+  <canvas id="speechBubbleCanvas"></canvas>
+</div>
+<div>
+  <input type="text" id="textInput" placeholder="Enter your text">
+  <button id="generateButton">Generate Speech Bubble</button>
+  <a id="downloadLink" style="display: none;">Download SVG</a>
+</div>
+<script>
+  const bubbleDesignSelect = document.getElementById('bubbleDesign');
+  const canvas = document.getElementById('speechBubbleCanvas');
+  const ctx = canvas.getContext('2d');
+  const generateButton = document.getElementById('generateButton');
+  const downloadLink = document.getElementById('downloadLink');
+
+  generateButton.addEventListener('click', generateSpeechBubble);
+
+  function generateSpeechBubble() {
+    const userText = document.getElementById('textInput').value;
+    const bubbleDesign = bubbleDesignSelect.value;
+
+    canvas.width = 300;
+    canvas.height = 150;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let pathFunction;
+
+    if (bubbleDesign === 'normal') {
+      pathFunction = normalBubblePath;
+    } else if (bubbleDesign === 'rounded') {
+      pathFunction = roundedBubblePath;
+    } else if (bubbleDesign === 'thought') {
+      pathFunction = thoughtBubblePath;
+    }
+
+    drawBubble(ctx, pathFunction, userText);
+
+    const svgData = generateSVGFromCanvas(canvas);
+    downloadLink.setAttribute('href', 'data:image/svg+xml,' + encodeURIComponent(svgData));
+    downloadLink.setAttribute('download', 'speech_bubble.svg');
+    downloadLink.style.display = 'block';
+  }
+
+  function drawBubble(ctx, pathFunction, text) {
+    const padding = 10;
+    const width = canvas.width - 2 * padding;
+    const height = canvas.height - 2 * padding;
+
+    ctx.fillStyle = 'white';
+    ctx.strokeStyle = 'black';
+
+    ctx.beginPath();
+    pathFunction(ctx, padding, padding, width, height);
+    ctx.closePath();
+
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '14px Arial';
+
+    // Fit text within the bubble
+    const textWidth = ctx.measureText(text).width;
+    const textHeight = 14; // Assuming font size is 14px
+    const maxTextWidth = width - 20; // Leave some padding
+    const maxLines = Math.floor(height / textHeight);
+
+    if (textWidth > maxTextWidth) {
+      const textToFit = text.split(' ');
+      let line = '';
+      let lines = [];
+      for (const word of textToFit) {
+        if (ctx.measureText(line + word).width <= maxTextWidth) {
+          line += word + ' ';
+        } else {
+          lines.push(line);
+          line = word + ' ';
+        }
+      }
+      lines.push(line);
+      if (lines.length > maxLines) {
+        lines = lines.slice(0, maxLines);
+      }
+      text = lines.join('\n');
+    }
+
+    const textX = padding + width / 2;
+    const textY = padding + height / 2;
+
+    ctx.fillStyle = 'black';
+    ctx.fillText(text, textX, textY);
+  }
+
+  function normalBubblePath(ctx, x, y, width, height) {
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + width, y);
+    ctx.lineTo(x + width, y + height - 15);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - 15, y + height);
+    ctx.lineTo(x + 15, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - 15);
+    ctx.lineTo(x, y);
+  }
+
+  function roundedBubblePath(ctx, x, y, width, height) {
+    const borderRadius = 10;
+    ctx.moveTo(x + borderRadius, y);
+    ctx.lineTo(x + width - borderRadius, y);
+    ctx.arcTo(x + width, y, x + width, y + borderRadius, borderRadius);
+    ctx.lineTo(x + width, y + height - borderRadius);
+    ctx.arcTo(x + width, y + height, x + width - borderRadius, y + height, borderRadius);
+    ctx.lineTo(x + borderRadius, y + height);
+    ctx.arcTo(x, y + height, x, y + height - borderRadius, borderRadius);
+    ctx.lineTo(x, y + borderRadius);
+    ctx.arcTo(x, y, x + borderRadius, y, borderRadius);
+  }
+
+  function thoughtBubblePath(ctx, x, y, width, height) {
+    ctx.moveTo(x, y + height / 2);
+    ctx.lineTo(x, y + height);
+    ctx.lineTo(x + width, y + height);
+    ctx.lineTo(x + width, y + height / 2);
+    ctx.lineTo(x + width - 10, y + height / 2);
+    ctx.lineTo(x + width - 20, y);
+    ctx.lineTo(x + 10, y);
+    ctx.lineTo(x, y + height / 2);
+  }
+
+  function generateSVGFromCanvas(canvas) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', canvas.width);
+    svg.setAttribute('height', canvas.height);
+
+    const svgImage = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+    svgImage.setAttribute('x', '0');
+    svgImage.setAttribute('y', '0');
+    svgImage.setAttribute('width', canvas.width);
+    svgImage.setAttribute('height', canvas.height);
+    svgImage.setAttributeNS('http://www.w3.org/1999/xlink', 'href', canvas.toDataURL('image/png'));
+
+    svg.appendChild(svgImage);
+    return svg.outerHTML;
+  }
+</script>
+</body>
+</html>

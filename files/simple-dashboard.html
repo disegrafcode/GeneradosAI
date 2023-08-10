@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <title>Responsive Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    #sidebar {
+      background-color: #333;
+      color: white;
+      padding-top: 20px;
+      height: 100vh;
+      position: fixed;
+      transition: all 0.3s;
+    }
+    #content {
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    .hide-sidebar #sidebar {
+      transform: translateX(-100%);
+    }
+    .hide-sidebar #content {
+      width: 100%;
+    }
+    .show-sidebar #content {
+      margin-left: 250px; /* Sidebar width */
+    }
+    @media (max-width: 767px) {
+      #sidebar {
+        left: -250px; /* Negative sidebar width */
+        width: 250px; /* Sidebar width */
+        overflow-y: auto;
+        transition: left 0.3s;
+      }
+      #sidebar.active {
+        left: 0;
+      }
+      .show-sidebar #content {
+        margin-left: 0;
+      }
+      .hide-sidebar #content {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar">
+        <div class="position-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">
+                Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                Analytics
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                Reports
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                Settings
+              </a>
+            </li>
+          </ul>
+        </div>
+        <button id="closeSidebar" class="btn btn-dark d-md-none">
+          Close Menu
+        </button>
+      </nav>
+
+      <main id="content" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <button id="sidebarToggle" class="btn btn-dark d-none d-md-block mb-3">
+          Toggle Sidebar
+        </button>
+        <button id="sidebarCollapse" class="btn btn-dark d-md-none mb-3">
+          Toggle Menu
+        </button>
+        <!-- Your dashboard content goes here -->
+        <h1>Welcome to the Dashboard</h1>
+        <p>This is a responsive dashboard with a left sidebar menu.</p>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const sidebarCollapse = document.getElementById('sidebarCollapse');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const closeSidebar = document.getElementById('closeSidebar');
+
+    sidebarCollapse.addEventListener('click', function() {
+      sidebar.classList.toggle('active');
+    });
+
+    sidebarToggle.addEventListener('click', function() {
+      document.body.classList.toggle('hide-sidebar');
+    });
+
+    closeSidebar.addEventListener('click', function() {
+      sidebar.classList.remove('active');
+    });
+  </script>
+</body>
+</html>
